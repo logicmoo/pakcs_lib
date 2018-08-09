@@ -5,7 +5,7 @@
 	  [installDir/1,
            prolog/1, prologMajorVersion/1, prologMinorVersion/1,
            swi7orHigher/0,
-           pakfreeze/2,
+           pakfreeze/2,loadRuntimeMods/0,
            pakcsrc/2,
 	   verbosity/1, fileOpenOptions/1, currentModuleFile/2,
 	   sicstus310orHigher/0,
@@ -49,7 +49,34 @@
 
 :- use_module(pakcsversion).
 
+:- module_transparent(pakfreeze/2).
 pakfreeze(Var,Goal):- freeze(Var,Goal).
+
+:- user:dynamic([hnf/4,makeShare/2,domain/3,constructortype/7,functiontype/6,nf/4]).
+
+% dereference a function's argument, i.e., remove all top-level sharing structures:
+derefRoot(R,V) :- var(R), !, V=R.
+derefRoot(share(M),V) :- !,
+	get_mutable(E,M), (E='$eval'(R) -> V=R ; derefRoot(E,V)).
+derefRoot(R,R).
+
+% completely dereference a function's argument, i.e., remove all sharing structures
+% also inside subterms:
+derefAll(R,V) :- var(R), !, V=R.
+derefAll(share(M),V) :- !,
+	get_mutable(E,M), (E='$eval'(R) -> derefAll(R,V) ; derefAll(E,V)).
+derefAll(R,V) :- functor(R,F,N), functor(V,F,N), derefArgs(N,R,V).
+derefArgs(0,_,_) :- !.
+derefArgs(I,R,V) :-
+	arg(I,R,RI), derefAll(RI,VI), arg(I,V,VI),
+	I1 is I-1, derefArgs(I1,R,V).
+
+
+loadRuntimeMods :- 
+    moduleDir(MD),
+    directory_source_files(MD,Files,[file_type(prolog),if(false)]),
+    forall(member(File,Files),ignore((\+ source_file(File),user:ensure_loaded(File)))).
+loadRuntimeMods.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The installation directory of PAKCS.

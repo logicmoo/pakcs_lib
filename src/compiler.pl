@@ -2443,6 +2443,7 @@ exp2FuncShareTerm(_,_,'Lit'('Ident'(S)),[],A) :- !,
 	write('" should not occur in FlatCurry expressions.'),
 	nl.
 exp2FuncShareTerm(Level,Vars,'Comb'(CombType,NameS,Exprs),NewShares,NewTerm) :- !,
+        Arity = _,
 	exp2FuncShareTerms(Vars,Exprs,Shares,Terms),
 	flatName2Atom(NameS,Name),
 	checkForDeprecatedFunction(Name),
