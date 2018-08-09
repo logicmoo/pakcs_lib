@@ -48,7 +48,7 @@ sicstus:
 .PHONY: swi
 swi:
 	$(MAKE) libswi
-	rm -f prologbasics.pl ; cp swibasics.pl prologbasics.pl
+	# dont "rm -f prologbasics.pl ; cp swibasics.pl prologbasics.pl"
 	$(MAKE) swi.state
 	mv -f swi.state c2p.state
 
