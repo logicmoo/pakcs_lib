@@ -99,7 +99,7 @@ genBlockDecl(Out,PredName,PredArity,BoundPositions,NewPredName) :-
 genFreezeLiteral([],_,Literal,Literal) :- !.
 genFreezeLiteral([P|Ps],Literal,FreezeLiteral,NewFreezeLiteral) :-
 	arg(P,Literal,Var),
-	genFreezeLiteral(Ps,Literal,freeze(Var,FreezeLiteral),NewFreezeLiteral).
+	genFreezeLiteral(Ps,Literal,pakfreeze(Var,FreezeLiteral),NewFreezeLiteral).
 
 
 % concatenate two atoms:

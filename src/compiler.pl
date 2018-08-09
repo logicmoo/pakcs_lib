@@ -1865,7 +1865,7 @@ transConstrEq(Suffix) :-
 		        arg(N,A,ArgA), arg(N,B,ArgB),
 		        hnf(ArgB,HArgB,E0,E1), Bind_ArgA_HArgB_R0_E1_E2,
 		        N1 is N+1,
-			freeze(E2,(R0='FAIL'(_) -> R=R0, E2=E
+			pakfreeze(E2,(R0='FAIL'(_) -> R=R0, E2=E
 				                 ; BindArgs_N1_NA_A_B_R_E2_E))))),
 	nl,
 	OccursNot_X_Y =.. [OccursNot,X,Y],
@@ -2029,7 +2029,7 @@ transNf(Suffix) :-
 		       arg(N,A,ArgA), arg(N,NR,ArgR),
 		       Nf_ArgA_ArgR_E0_E1,
 		       N1 is N+1,
-		       freeze(E1,((nonvar(ArgR),ArgR='FAIL'(_))
+		       pakfreeze(E1,((nonvar(ArgR),ArgR='FAIL'(_))
 				  -> R=ArgR, E1=E
 				   ; NfHnfArgs_N1_NA_A_NR_R_E1_E))))),
 	nl.

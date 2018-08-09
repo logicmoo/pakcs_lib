@@ -5,6 +5,7 @@
 	  [installDir/1,
            prolog/1, prologMajorVersion/1, prologMinorVersion/1,
            swi7orHigher/0,
+           pakfreeze/2,
            pakcsrc/2,
 	   verbosity/1, fileOpenOptions/1, currentModuleFile/2,
 	   sicstus310orHigher/0,
@@ -47,6 +48,8 @@
 	   create_mutable/2, get_mutable/2, update_mutable/2]).
 
 :- use_module(pakcsversion).
+
+pakfreeze(Var,Goal):- freeze(Var,Goal).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The installation directory of PAKCS.
@@ -162,7 +165,7 @@ reduceConcurrentConjunction('FAIL'(X),_,R,E1,_,E) :-
 %	write(user_error,'Internal error in waitConcurrentConjunction'),
 %	nl(user_error).
 
-waitForEval(R0,R,E0,E) :- freeze(E0,(R0=R, E0=E)).
+waitForEval(R0,R,E0,E) :- pakfreeze(E0,(R0=R, E0=E)).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -659,8 +662,8 @@ callAndReturnSuspensions(Goal,Suspensions) :-
 	copy_term(Vars,_,SuspGoal),
 	omitFreezeGoals(SuspGoal,Suspensions).
 
-omitFreezeGoals([freeze(_,Goal)|Gs],NGs) :- !, omitFreezeGoals([Goal|Gs],NGs).
-omitFreezeGoals([user:freeze(_,Goal)|Gs],NGs) :- !,
+omitFreezeGoals([pakfreeze(_,Goal)|Gs],NGs) :- !, omitFreezeGoals([Goal|Gs],NGs).
+omitFreezeGoals([user:pakfreeze(_,Goal)|Gs],NGs) :- !,
 	omitFreezeGoals([Goal|Gs],NGs).
 omitFreezeGoals([Goal|Gs],[Goal|NGs]) :- omitFreezeGoals(Gs,NGs).
 omitFreezeGoals([],[]).
@@ -686,7 +689,7 @@ genBlockDecl(PredName,PredArity,BoundPositions,NewPredName) :-
 genFreezeLiteral([],_,Literal,Literal) :- !.
 genFreezeLiteral([P|Ps],Literal,FreezeLiteral,NewFreezeLiteral) :-
 	arg(P,Literal,Var),
-	genFreezeLiteral(Ps,Literal,freeze(Var,FreezeLiteral),NewFreezeLiteral).
+	genFreezeLiteral(Ps,Literal,pakfreeze(Var,FreezeLiteral),NewFreezeLiteral).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

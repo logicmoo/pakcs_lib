@@ -189,6 +189,7 @@ extractReplCmdParameters([Arg|Args],[ArgS|Params],RArgs) :-
 	extractReplCmdParameters(Args,Params,RArgs).
 
 % process a REPL command parameter:
+processReplCmd("prolog",_Args) :- !,prolog.
 processReplCmd("quit",Args) :- !,
 	(Args=[] -> exitCode(EC), halt(EC)
 	  ; writeErr('ERROR: Arguments after ":quit"!'), halt(1)).
@@ -295,7 +296,7 @@ prefixOf(Prefix,[_|FullS],Full) :- prefixOf(Prefix,FullS,Full).
 
 % all possible commands:
 allCommands(["add","browse","cd","compile","coosy",
-             "edit","eval","fork","help",
+             "edit","eval","prolog","fork","help",
 	     "interface","load","modules","peval","programs","quit","reload",
 	     "save","set","show","source","type","usedimports"]).
 
@@ -351,7 +352,7 @@ process([58|Cs]) :- !, % 58=':'
 	(append(ShortCmd,[32|Rest],Cs) -> true ; ShortCmd=Cs, Rest=[]),
 	expandCommand(ShortCmd,Cmd),
 	removeBlanks(Rest,Params),
-	(member(Cmd,["load","reload","compile","quit","eval"])
+	(member(Cmd,["load","reload","compile","quit","eval","prolog"])
           -> true
            ; ioAdmissible),
 	processCommand(Cmd,Params),
@@ -735,6 +736,7 @@ writeMainImports(S,[Imp|Imps]) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 processCommand("quit",[]) :- !.
+processCommand("prolog",[]) :- !, prolog, nl.
 processCommand("help",[]) :- !,
 	write('Commands (can be abbreviated to a prefix if unique):'), nl,
 	write(':load <prog>      - compile and load program "<prog>.curry" and all imports'),nl,
@@ -742,6 +744,7 @@ processCommand("help",[]) :- !,
 	write(':reload           - recompile currently loaded modules'),nl,
 	write(':compile <prog>   - alias for ":load <prog>"'),nl,
 	write(':eval <expr>      - evaluate expression <expr>'), nl,
+	write(':prolog           - call ?- prolog.'), nl,
 	%write(':define <v>=<exp> - define variable binding for subsequent expressions'), nl,
 	write(':type <expr>      - show the type of <expression>'),nl,
 	write(':browse           - browse program and its imported modules'),nl,

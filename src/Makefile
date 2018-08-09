@@ -14,7 +14,7 @@ SICSTUS=$(BINDIR)/sicstusprolog
 SWI=$(BINDIR)/swiprolog
 
 # Standard options for SWI-Prolog
-SWIOPTIONS=-q -L0 -G0 -T0 -O
+SWIOPTIONS=-f /dev/null -q -L0 -G0 -T0 -O
 
 # library directory of PAKCS:
 ifndef LIBDIR
